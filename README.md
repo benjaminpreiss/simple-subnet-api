@@ -1,2 +1,2 @@
-# simple-subnet-backend
-Simple Checker subnet backend
+# simple-subnet-api
+Simple Checker subnet api
