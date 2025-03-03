@@ -1,6 +1,6 @@
 # simple-subnet-api
 
-A uniform API designed for publishing and querying subnet measurement data. 
+A uniform API designed for publishing and querying subnet measurement data.
 
 ### [api/](./api/)
 

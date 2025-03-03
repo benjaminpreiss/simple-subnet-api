@@ -11,15 +11,15 @@ jobs:
     strategy:
       matrix:
         dependencyStartsWith:
-          - '@sentry/'
+          - "@sentry/"
           - mocha
           - pg
           - debug
           - typescript
           - postgrator
-          - '@types/'
+          - "@types/"
           - standard
-          - '@fastify/'
+          - "@fastify/"
     steps:
       - name: Dependabot metadata
         id: metadata
