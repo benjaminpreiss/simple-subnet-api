@@ -25,12 +25,10 @@ RUN apt-get update -qq && \
 # Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
 COPY --link package-lock.json package.json ./
 
-# We cannot use a wildcard until `COPY --parents` is stabilised
-# See https://docs.docker.com/reference/dockerfile/#copy---parents
-COPY --link api/package.json ./api/
-COPY --link db/package.json ./db/
+# Install node modules
+COPY --link package.json package-lock.json .
 
-RUN npm ci --workspaces
+RUN npm ci
 
 # Copy application code
 COPY --link . .
@@ -42,8 +40,5 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# Set to `api` or `observer`
-# This argument controls the value used by npm to choose which workspace (subdir) to start
-ENV NPM_CONFIG_WORKSPACE=""
-
+# Start the server by default, this can be overwritten at runtime
 CMD [ "npm", "start" ]

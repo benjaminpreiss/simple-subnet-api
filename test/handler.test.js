@@ -4,7 +4,7 @@ import {
   createPgPool,
   migrateWithPgClient,
   DATABASE_URL
-} from '../../db/index.js'
+} from '../lib/migrate.js'
 import { createApp } from '../lib/app.js'
 import { assertResponseStatus } from './test-helpers.js'
 
