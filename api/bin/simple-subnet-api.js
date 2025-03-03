@@ -1,6 +1,9 @@
 import '../lib/instrument.js'
 import { createApp } from '../lib/app.js'
-import { DATABASE_URL } from '@filecoin-station/simple-subnet-api-db'
+import {
+  DATABASE_URL,
+  poolConfig
+} from '@filecoin-station/simple-subnet-api-db'
 
 const {
   PORT = '8080',
@@ -10,6 +13,7 @@ const {
 
 const app = createApp({
   databaseUrl: DATABASE_URL,
+  dbPoolConfig: poolConfig,
   logger: {
     level: ['1', 'true'].includes(REQUEST_LOGGING) ? 'info' : 'error'
   }

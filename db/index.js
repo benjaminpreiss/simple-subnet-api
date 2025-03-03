@@ -22,7 +22,7 @@ const migrationsDirectory = join(
   'migrations'
 )
 
-const poolConfig = {
+export const poolConfig = {
   // allow the pool to close all connections and become empty
   min: 0,
   // this values should correlate with service concurrency hard_limit configured in fly.toml
