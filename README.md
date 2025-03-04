@@ -12,7 +12,7 @@ To deploy the changes manually, run the following command from the **monorepo
 root directory**:
 
 ```bash
-fly deploy -c api/fly.toml
+fly deploy -c fly.toml
 ```
 
 ## Testing
