@@ -1,16 +1,7 @@
 # simple-subnet-api
 
-A uniform API designed for publishing and querying subnet measurement data.
-
-### [api/](./api/)
-
-A public REST API for subnet measurement data, offering endpoints to publish and
-query subnet metrics.
-
-### [db/](./db/)
-
-Shared component providing helpers to access the database, including database
-schema migration scripts.
+Offer a uniform API designed for publishing and querying measurement data for
+multiple subnets.
 
 ## Deployment
 
@@ -21,7 +12,7 @@ To deploy the changes manually, run the following command from the **monorepo
 root directory**:
 
 ```bash
-fly deploy -c api/fly.toml
+fly deploy -c fly.toml
 ```
 
 ## Testing

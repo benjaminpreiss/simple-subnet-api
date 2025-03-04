@@ -48,14 +48,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build monorepo Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           cache-from: type=registry,ref=ghcr.io/filecoin-station/core
           cache-to: type=inline
 
-  deploy-api:
+  deploy:
     if: github.ref == 'refs/heads/main'
     needs: [build, docker-build]
     runs-on: ubuntu-latest
