@@ -16,6 +16,7 @@ describe('HTTP request handler', () => {
   before(async () => {
     pgPool = await createPgPool(DATABASE_URL)
     await migrateWithPgClient(pgPool)
+    await pgPool.end()
 
     app = createApp({
       databaseUrl: DATABASE_URL,
@@ -31,7 +32,6 @@ describe('HTTP request handler', () => {
   })
 
   after(async () => {
-    await pgPool.end()
     await app.close()
   })
 

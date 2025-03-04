@@ -14,7 +14,13 @@ export const assertResponseStatus = async (res, status) => {
   }
 }
 
-// @ts-ignore
+/**
+ *
+ * @param {import('../lib/typings.js').PgPool} pgPool
+ * @param {import('../lib/typings.js').Subnet} subnet
+ * @param {number} total
+ * @param {number} successful
+ */
 export const withSubnetMeasurements = async (
   pgPool,
   subnet,
