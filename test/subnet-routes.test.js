@@ -79,10 +79,10 @@ describe('Subnet routes', () => {
     })
 
     it('submit successful measurement - unknown subnet', async () => {
-      const subnet = 'unknown-subnet'
-      // @ts-ignore Ignore the error because we want to test the 404 response
+      const subnet = 'walrus'
+      const unknownSubnet = 'unknown-subnet'
       await withSubnetMeasurements(pgPool, subnet, 0, 0)
-      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
+      const res = await fetch(new URL(`/${unknownSubnet}/measurement`, baseUrl), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(false)
