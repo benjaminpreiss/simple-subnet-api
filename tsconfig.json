@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
 
-    // "strict": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
 
     "declaration": true,
