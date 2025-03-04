@@ -24,10 +24,6 @@ RUN apt-get update -qq && \
 # to install all modules: "npm install --production=false".
 # Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
 COPY --link package-lock.json package.json ./
-
-# Install node modules
-COPY --link package.json package-lock.json .
-
 RUN npm ci
 
 # Copy application code
