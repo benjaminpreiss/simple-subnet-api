@@ -4,7 +4,8 @@ A uniform API designed for publishing and querying subnet measurement data.
 
 ### [api/](./api/)
 
-A public REST API for subnet measurement data, offering endpoints to publish and query subnet metrics.
+A public REST API for subnet measurement data, offering endpoints to publish and
+query subnet metrics.
 
 ### [db/](./db/)
 
