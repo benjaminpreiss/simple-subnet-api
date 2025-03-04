@@ -55,7 +55,7 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/filecoin-station/core
           cache-to: type=inline
 
-  deploy-api:
+  deploy:
     if: github.ref == 'refs/heads/main'
     needs: [build, docker-build]
     runs-on: ubuntu-latest
