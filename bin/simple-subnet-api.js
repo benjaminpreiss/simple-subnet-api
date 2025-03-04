@@ -1,6 +1,6 @@
 import '../lib/instrument.js'
 import { createApp } from '../lib/app.js'
-import { DATABASE_URL } from '@filecoin-station/simple-subnet-api-db'
+import { DATABASE_URL } from '../lib/migrate.js'
 
 const {
   PORT = '8080',

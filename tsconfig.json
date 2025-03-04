@@ -21,6 +21,6 @@
     "declarationMap": true,
     "resolveJsonModule": true
   },
-  "include": ["api", "backend", "db"],
+  "include": ["bin", "lib", "test"],
   "exclude": ["dist/**/*"]
 }

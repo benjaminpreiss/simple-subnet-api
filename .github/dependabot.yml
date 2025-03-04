@@ -11,8 +11,9 @@ updates:
       prefix: "deps"
       prefix-development: "deps(dev)"
     reviewers:
-      - "bajtos"
       - "juliangruber"
+      - "NikolasHaimerl"
+      - "pyropy"
     groups:
       sentry:
         patterns:
@@ -26,8 +27,9 @@ updates:
     commit-message:
       prefix: "ci"
     reviewers:
-      - "bajtos"
       - "juliangruber"
+      - "NikolasHaimerl"
+      - "pyropy"
   - package-ecosystem: "docker"
     directories:
       - "/"
