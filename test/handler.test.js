@@ -1,15 +1,12 @@
 import { after, before, describe, it } from 'node:test'
-
-import {
-  createPgPool,
-  migrateWithPgClient,
-  DATABASE_URL
-} from '../lib/migrate.js'
+import { migrateWithPgClient } from '../lib/migrate.js'
+import { createPgPool } from '../lib/pool.js'
 import { createApp } from '../lib/app.js'
 import { assertResponseStatus } from './test-helpers.js'
+import { DATABASE_URL } from '../lib/config.js'
 
 describe('HTTP request handler', () => {
-  /** @type {import('@filecoin-station/simple-subnet-api-db').PgPool} */
+  /** @type {import('pg').Pool} */
   let pgPool
   /** @type {import('fastify').FastifyInstance} */
   let app
@@ -17,7 +14,7 @@ describe('HTTP request handler', () => {
   let baseUrl
 
   before(async () => {
-    pgPool = await createPgPool()
+    pgPool = await createPgPool(DATABASE_URL)
     await migrateWithPgClient(pgPool)
     await pgPool.end()
 
