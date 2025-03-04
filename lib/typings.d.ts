@@ -4,7 +4,7 @@ import { FastifyRequest } from "fastify";
 export type Subnet = "walrus" | "arweave";
 
 export type RequestWithSubnet = FastifyRequest<{
-  Parameters: { subnet: string };
+  Params: { subnet: string };
 }>;
 
 export interface Logger {
