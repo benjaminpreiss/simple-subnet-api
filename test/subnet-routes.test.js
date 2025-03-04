@@ -9,7 +9,7 @@ import {
 } from './test-helpers.js'
 import { DATABASE_URL } from '../lib/config.js'
 
-describe('HTTP request handler', () => {
+describe('Subnet routes', () => {
   /** @type {import('pg').Pool} */
   let pgPool
   /** @type {import('fastify').FastifyInstance} */
@@ -35,8 +35,8 @@ describe('HTTP request handler', () => {
   })
 
   after(async () => {
-    await pgPool.end()
     await app.close()
+    await pgPool.end()
   })
 
   beforeEach(async () => {
