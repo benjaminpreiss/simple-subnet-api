@@ -13,3 +13,16 @@ export const assertResponseStatus = async (res, status) => {
     })
   }
 }
+
+// @ts-ignore
+export const withSubnetMeasurements = async (
+  pgPool,
+  subnet,
+  total,
+  successful
+) => {
+  await pgPool.query(
+    'INSERT INTO measurements (subnet_id, total, successful) VALUES ($1, $2, $3)',
+    [subnet, total, successful]
+  )
+}
