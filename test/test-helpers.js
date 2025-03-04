@@ -28,7 +28,7 @@ export const withSubnetMeasurements = async (
   successful
 ) => {
   await pgPool.query(
-    'INSERT INTO measurements (subnet_id, total, successful) VALUES ($1, $2, $3)',
+    'INSERT INTO measurements (subnet, total, successful) VALUES ($1, $2, $3)',
     [subnet, total, successful]
   )
 }

@@ -59,7 +59,7 @@ describe('Subnet routes', () => {
     await assertResponseStatus(res, 200)
 
     const { rows } = await pgPool.query(
-      'SELECT total, successful FROM measurements WHERE subnet_id = $1',
+      'SELECT total, successful FROM measurements WHERE subnet = $1',
       [subnet]
     )
     assert.deepStrictEqual(rows, [{ total: 1n, successful: 1n }])
@@ -76,7 +76,7 @@ describe('Subnet routes', () => {
     await assertResponseStatus(res, 200)
 
     const { rows } = await pgPool.query(
-      'SELECT total, successful FROM measurements WHERE subnet_id = $1',
+      'SELECT total, successful FROM measurements WHERE subnet = $1',
       [subnet]
     )
     assert.deepStrictEqual(rows, [{ total: 1n, successful: 0n }])
