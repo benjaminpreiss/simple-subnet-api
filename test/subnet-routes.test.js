@@ -43,54 +43,71 @@ describe('Subnet routes', () => {
     await pgPool.query('DELETE FROM measurements')
   })
 
-  it('returns 404 for unknown subnets', async () => {
-    const res = await fetch(new URL('/unknown-subnet', baseUrl))
-    await assertResponseStatus(res, 404)
-  })
+  describe('/:subnet/measurement', () => {
+    it('submit successful measurement', async () => {
+      const subnet = 'walrus'
+      await withSubnetMeasurements(pgPool, subnet, 0, 0)
+      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(true)
+      })
+      await assertResponseStatus(res, 200)
 
-  it('increments total and successful measurements for POST /:subnet/measurement with true body', async () => {
-    const subnet = 'walrus'
-    await withSubnetMeasurements(pgPool, subnet, 0, 0)
-    const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(true)
+      const { rows } = await pgPool.query(
+        'SELECT total, successful FROM measurements WHERE subnet = $1',
+        [subnet]
+      )
+      assert.deepStrictEqual(rows, [{ total: 1n, successful: 1n }])
     })
-    await assertResponseStatus(res, 200)
 
-    const { rows } = await pgPool.query(
-      'SELECT total, successful FROM measurements WHERE subnet = $1',
-      [subnet]
-    )
-    assert.deepStrictEqual(rows, [{ total: 1n, successful: 1n }])
-  })
+    it('submit unsuccessful measurement', async () => {
+      const subnet = 'walrus'
+      await withSubnetMeasurements(pgPool, subnet, 0, 0)
+      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(false)
+      })
+      await assertResponseStatus(res, 200)
 
-  it('increments total but not successful measurements for POST /:subnet/measurement with false body', async () => {
-    const subnet = 'walrus'
-    await withSubnetMeasurements(pgPool, subnet, 0, 0)
-    const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(false)
+      const { rows } = await pgPool.query(
+        'SELECT total, successful FROM measurements WHERE subnet = $1',
+        [subnet]
+      )
+      assert.deepStrictEqual(rows, [{ total: 1n, successful: 0n }])
     })
-    await assertResponseStatus(res, 200)
 
-    const { rows } = await pgPool.query(
-      'SELECT total, successful FROM measurements WHERE subnet = $1',
-      [subnet]
-    )
-    assert.deepStrictEqual(rows, [{ total: 1n, successful: 0n }])
+    it('submit successful measurement - unknown subnet', async () => {
+      const subnet = 'unknown-subnet'
+      // @ts-ignore Ignore the error because we want to test the 404 response
+      await withSubnetMeasurements(pgPool, subnet, 0, 0)
+      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(false)
+      })
+
+      await assertResponseStatus(res, 404)
+    })
   })
 
-  it('returns measurement data for GET /:subnet', async () => {
-    const subnet = 'walrus'
-    await withSubnetMeasurements(pgPool, subnet, 5, 3)
+  describe('/:subnet', () => {
+    it('returns measurement data for GET /:subnet', async () => {
+      const subnet = 'walrus'
+      await withSubnetMeasurements(pgPool, subnet, 5, 3)
 
-    const res = await fetch(new URL(`/${subnet}`, baseUrl))
-    await assertResponseStatus(res, 200)
+      const res = await fetch(new URL(`/${subnet}`, baseUrl))
+      await assertResponseStatus(res, 200)
 
-    /** @type {any} */
-    const data = await res.json()
-    assert.deepStrictEqual(data, { total: '5', successful: '3' })
+      /** @type {any} */
+      const data = await res.json()
+      assert.deepStrictEqual(data, { total: '5', successful: '3' })
+    })
+
+    it('returns 404 for unknown subnets', async () => {
+      const res = await fetch(new URL('/unknown-subnet', baseUrl))
+      await assertResponseStatus(res, 404)
+    })
   })
 })
