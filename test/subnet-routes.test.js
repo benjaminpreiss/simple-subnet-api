@@ -95,7 +95,7 @@ describe('Subnet routes', () => {
       assert.deepStrictEqual(data, { total: '5', successful: '3' })
     })
 
-    it('returns 404 for unknown subnets', async () => {
+    it('returns 400 for unknown subnets', async () => {
       const res = await fetch(new URL('/unknown-subnet/retrieval-success-rate', baseUrl))
       await assertResponseStatus(res, 400)
     })

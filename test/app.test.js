@@ -44,4 +44,9 @@ describe('HTTP request handler', () => {
     const res = await fetch(`${baseUrl}//path-not-found`)
     await assertResponseStatus(res, 404)
   })
+
+  it('returns 404 for unknown path', async () => {
+    const res = await fetch(new URL('/unknown-path', baseUrl))
+    await assertResponseStatus(res, 404)
+  })
 })
