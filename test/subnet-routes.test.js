@@ -5,6 +5,7 @@ import { createPgPool } from '../lib/pool.js'
 import { createApp } from '../lib/app.js'
 import {
   assertResponseStatus,
+  postMeasurement,
   withSubnetMeasurements
 } from './test-helpers.js'
 import { DATABASE_URL } from '../lib/config.js'
@@ -47,11 +48,7 @@ describe('Subnet routes', () => {
     it('submit successful measurement', async () => {
       const subnet = 'walrus'
       await withSubnetMeasurements(pgPool, subnet, 0, 0)
-      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(true)
-      })
+      const res = await postMeasurement(baseUrl, subnet, true)
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
@@ -64,11 +61,7 @@ describe('Subnet routes', () => {
     it('submit unsuccessful measurement', async () => {
       const subnet = 'walrus'
       await withSubnetMeasurements(pgPool, subnet, 0, 0)
-      const res = await fetch(new URL(`/${subnet}/measurement`, baseUrl), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(false)
-      })
+      const res = await postMeasurement(baseUrl, subnet, false)
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
@@ -82,22 +75,19 @@ describe('Subnet routes', () => {
       const subnet = 'walrus'
       const unknownSubnet = 'unknown-subnet'
       await withSubnetMeasurements(pgPool, subnet, 0, 0)
-      const res = await fetch(new URL(`/${unknownSubnet}/measurement`, baseUrl), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(false)
-      })
+      // @ts-ignore - intentional error
+      const res = await postMeasurement(baseUrl, unknownSubnet, false)
 
-      await assertResponseStatus(res, 404)
+      await assertResponseStatus(res, 400)
     })
   })
 
-  describe('/:subnet', () => {
-    it('returns measurement data for GET /:subnet', async () => {
+  describe('/:subnet/retrieval-success-rate', () => {
+    it('returns measurement data for GET /:subnet/retrieval-success-rate', async () => {
       const subnet = 'walrus'
       await withSubnetMeasurements(pgPool, subnet, 5, 3)
 
-      const res = await fetch(new URL(`/${subnet}`, baseUrl))
+      const res = await fetch(new URL(`/${subnet}/retrieval-success-rate`, baseUrl))
       await assertResponseStatus(res, 200)
 
       /** @type {any} */
@@ -106,8 +96,8 @@ describe('Subnet routes', () => {
     })
 
     it('returns 404 for unknown subnets', async () => {
-      const res = await fetch(new URL('/unknown-subnet', baseUrl))
-      await assertResponseStatus(res, 404)
+      const res = await fetch(new URL('/unknown-subnet/retrieval-success-rate', baseUrl))
+      await assertResponseStatus(res, 400)
     })
   })
 })
