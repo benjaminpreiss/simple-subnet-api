@@ -15,21 +15,23 @@ export const assertResponseStatus = async (res, status) => {
 }
 
 /**
- *
- * @param {import('../lib/typings.js').PgPool} pgPool
- * @param {import('../lib/typings.js').Subnet} subnet
- * @param {number} total
- * @param {number} successful
+ * @param {object} args
+ * @param {import('../lib/typings.js').PgPool} args.pgPool
+ * @param {string} args.day
+ * @param {import('../lib/typings.js').Subnet} args.subnet
+ * @param {number} args.total
+ * @param {number} args.successful
  */
-export const withSubnetMeasurements = async (
+export const withSubnetMeasurements = async ({
   pgPool,
+  day,
   subnet,
   total,
   successful
-) => {
+}) => {
   await pgPool.query(
-    'INSERT INTO measurements (subnet, total, successful) VALUES ($1, $2, $3)',
-    [subnet, total, successful]
+    'INSERT INTO measurements (day, subnet, total, successful) VALUES ($1, $2, $3, $4)',
+    [day, subnet, total, successful]
   )
 }
 

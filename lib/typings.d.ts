@@ -3,9 +3,10 @@ import { FastifyRequest } from "fastify";
 
 export type Subnet = "walrus" | "arweave";
 
-export type RequestWithSubnet<TBody = {}> = FastifyRequest<{
+export type RequestWithSubnet<TBody = {}, UQuery = {}> = FastifyRequest<{
   Params: { subnet: string };
   Body: TBody;
+  Querystring: UQuery;
 }>;
 
 export interface Logger {

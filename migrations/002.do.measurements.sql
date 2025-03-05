@@ -1,13 +1,8 @@
 CREATE TABLE IF NOT EXISTS measurements (
-    subnet TEXT PRIMARY KEY,
+    day DATE NOT NULL DEFAULT CURRENT_DATE,
+    subnet TEXT,
     total BIGINT NOT NULL,
     successful BIGINT NOT NULL,
-    CHECK(total >= successful)
+    CHECK(total >= successful),
+    PRIMARY KEY (day, subnet)
 );
-
--- Insert initial data
-INSERT INTO measurements (subnet, total, successful)
-VALUES
-  ('walrus', 0, 0),
-  ('arweave', 0, 0)
-ON CONFLICT DO NOTHING;
