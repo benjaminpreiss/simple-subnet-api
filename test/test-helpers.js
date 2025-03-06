@@ -30,7 +30,7 @@ export const withSubnetMeasurements = async ({
   successful
 }) => {
   await pgPool.query(
-    'INSERT INTO measurements (day, subnet, total, successful) VALUES ($1, $2, $3, $4)',
+    'INSERT INTO daily_measurements (day, subnet, total, successful) VALUES ($1, $2, $3, $4)',
     [day, subnet, total, successful]
   )
 }

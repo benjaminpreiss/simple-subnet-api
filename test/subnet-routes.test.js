@@ -42,24 +42,24 @@ describe('Subnet routes', () => {
   })
 
   beforeEach(async () => {
-    await pgPool.query('DELETE FROM measurements')
+    await pgPool.query('DELETE FROM daily_measurements')
   })
 
   describe('/:subnet/measurement', () => {
-    it('submit successful measurement - no previous measurements', async () => {
+    it('submit successful measurement - no previous daily_measurements', async () => {
       const day = today()
       const subnet = 'walrus'
       const res = await postMeasurement(baseUrl, subnet, true)
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
-        'SELECT total, successful FROM measurements WHERE subnet = $1 AND day = $2',
+        'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
         [subnet, day]
       )
       assert.deepStrictEqual(rows, [{ total: 1n, successful: 1n }])
     })
 
-    it('submit successful measurement - has previous measurements', async () => {
+    it('submit successful measurement - has previous daily_measurements', async () => {
       const day = today()
       const subnet = 'walrus'
       await withSubnetMeasurements({ pgPool, day, subnet, successful: 0, total: 0 })
@@ -67,7 +67,7 @@ describe('Subnet routes', () => {
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
-        'SELECT total, successful FROM measurements WHERE subnet = $1 AND day = $2',
+        'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
         [subnet, day]
       )
       assert.deepStrictEqual(rows, [{ total: 1n, successful: 1n }])
@@ -79,7 +79,7 @@ describe('Subnet routes', () => {
       const res = await postMeasurement(baseUrl, subnet, false)
       await assertResponseStatus(res, 200)
       const { rows } = await pgPool.query(
-        'SELECT total, successful FROM measurements WHERE subnet = $1 AND day = $2',
+        'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
         [subnet, day]
       )
       assert.deepStrictEqual(rows, [{ total: 1n, successful: 0n }])
@@ -92,7 +92,7 @@ describe('Subnet routes', () => {
       const res = await postMeasurement(baseUrl, subnet, false)
       await assertResponseStatus(res, 200)
       const { rows } = await pgPool.query(
-        'SELECT total, successful FROM measurements WHERE subnet = $1 AND day = $2',
+        'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
         [subnet, day]
       )
       assert.deepStrictEqual(rows, [{ total: 1n, successful: 0n }])
@@ -104,7 +104,7 @@ describe('Subnet routes', () => {
       const unknownSubnet = 'unknown-subnet'
       await withSubnetMeasurements({ pgPool, day, subnet, total: 0, successful: 0 })
 
-      const res = await postMeasurement(baseUrl, /** @type {any} */(unknownSubnet),true)
+      const res = await postMeasurement(baseUrl, /** @type {any} */(unknownSubnet), true)
 
       await assertResponseStatus(res, 400)
     })
@@ -122,6 +122,22 @@ describe('Subnet routes', () => {
       /** @type {any} */
       const data = await res.json()
       assert.deepStrictEqual(data, [{ day: today(), total: '5', successful: '3' }])
+    })
+
+    it('sets default query string value for time range', async () => {
+      const subnet = 'walrus'
+      await withSubnetMeasurements({ pgPool, day: yesterday(), subnet, total: 10, successful: 5 })
+      await withSubnetMeasurements({ pgPool, day: today(), subnet, total: 5, successful: 3 })
+
+      const res = await fetch(new URL(`/${subnet}/retrieval-success-rate?from=${yesterday()}`, baseUrl))
+      await assertResponseStatus(res, 200)
+
+      /** @type {any} */
+      const data = await res.json()
+      assert.deepStrictEqual(data, [
+        { day: yesterday(), total: '10', successful: '5' },
+        { day: today(), total: '5', successful: '3' }
+      ])
     })
 
     it('returns retrieval success rate for specified range', async () => {
