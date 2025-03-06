@@ -103,8 +103,8 @@ describe('Subnet routes', () => {
       const subnet = 'walrus'
       const unknownSubnet = 'unknown-subnet'
       await withSubnetMeasurements({ pgPool, day, subnet, total: 0, successful: 0 })
-      // @ts-ignore - intentional error
-      const res = await postMeasurement(baseUrl, unknownSubnet, true)
+
+      const res = await postMeasurement(baseUrl, /** @type {any} */(unknownSubnet),true)
 
       await assertResponseStatus(res, 400)
     })
