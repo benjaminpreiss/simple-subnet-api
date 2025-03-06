@@ -12,7 +12,6 @@ jobs:
       matrix:
         dependencyStartsWith:
           - "@sentry/"
-          - mocha
           - pg
           - debug
           - typescript
