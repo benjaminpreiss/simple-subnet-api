@@ -8,7 +8,7 @@ import {
   postMeasurement,
   withSubnetMeasurements
 } from './test-helpers.js'
-import { DATABASE_URL } from '../lib/config.js'
+import { DATABASE_URL, poolConfig } from '../lib/config.js'
 import { today, yesterday } from '../lib/date.js'
 
 describe('Subnet routes', () => {
@@ -25,6 +25,7 @@ describe('Subnet routes', () => {
 
     app = createApp({
       databaseUrl: DATABASE_URL,
+      dbPoolConfig: poolConfig,
       logger: {
         level:
           process.env.DEBUG === '*' || process.env.DEBUG?.includes('test')

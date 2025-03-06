@@ -3,7 +3,7 @@ import { migrateWithPgClient } from '../lib/migrate.js'
 import { createPgPool } from '../lib/pool.js'
 import { createApp } from '../lib/app.js'
 import { assertResponseStatus } from './test-helpers.js'
-import { DATABASE_URL } from '../lib/config.js'
+import { DATABASE_URL, poolConfig } from '../lib/config.js'
 
 describe('HTTP request handler', () => {
   /** @type {import('pg').Pool} */
@@ -20,6 +20,7 @@ describe('HTTP request handler', () => {
 
     app = createApp({
       databaseUrl: DATABASE_URL,
+      dbPoolConfig: poolConfig,
       logger: {
         level:
           process.env.DEBUG === '*' || process.env.DEBUG?.includes('test')
