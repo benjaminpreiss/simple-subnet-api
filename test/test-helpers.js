@@ -38,12 +38,12 @@ export const withSubnetMeasurements = async ({
 /**
  * @param {string} baseUrl
  * @param {import('../lib/typings.js').Subnet} subnet
- * @param {boolean} retrievalSucceeded
+ * @param {{retrievalSucceeded: boolean}} measurement
  */
-export const postMeasurement = (baseUrl, subnet, retrievalSucceeded) => {
+export const postMeasurement = (baseUrl, subnet, measurement) => {
   return fetch(new URL(`/${subnet}/measurement`, baseUrl), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ retrievalSucceeded })
+    body: JSON.stringify(measurement)
   })
 }
