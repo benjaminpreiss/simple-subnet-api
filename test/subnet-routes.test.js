@@ -50,7 +50,7 @@ describe('Subnet routes', () => {
     it('submit successful measurement - no previous daily_measurements', async () => {
       const day = today()
       const subnet = 'walrus'
-      const res = await postMeasurement(baseUrl, subnet, true)
+      const res = await postMeasurement(baseUrl, subnet, { retrievalSucceeded: true })
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
@@ -64,7 +64,7 @@ describe('Subnet routes', () => {
       const day = today()
       const subnet = 'walrus'
       await withSubnetMeasurements({ pgPool, day, subnet, successful: 0, total: 0 })
-      const res = await postMeasurement(baseUrl, subnet, true)
+      const res = await postMeasurement(baseUrl, subnet, { retrievalSucceeded: true })
       await assertResponseStatus(res, 200)
 
       const { rows } = await pgPool.query(
@@ -77,7 +77,7 @@ describe('Subnet routes', () => {
     it('submit unsuccessful measurement - no previous measurements', async () => {
       const day = today()
       const subnet = 'walrus'
-      const res = await postMeasurement(baseUrl, subnet, false)
+      const res = await postMeasurement(baseUrl, subnet, { retrievalSucceeded: false })
       await assertResponseStatus(res, 200)
       const { rows } = await pgPool.query(
         'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
@@ -90,7 +90,7 @@ describe('Subnet routes', () => {
       const day = today()
       const subnet = 'walrus'
       await withSubnetMeasurements({ pgPool, day, subnet, total: 0, successful: 0 })
-      const res = await postMeasurement(baseUrl, subnet, false)
+      const res = await postMeasurement(baseUrl, subnet, { retrievalSucceeded: false })
       await assertResponseStatus(res, 200)
       const { rows } = await pgPool.query(
         'SELECT total, successful FROM daily_measurements WHERE subnet = $1 AND day = $2',
@@ -105,7 +105,7 @@ describe('Subnet routes', () => {
       const unknownSubnet = 'unknown-subnet'
       await withSubnetMeasurements({ pgPool, day, subnet, total: 0, successful: 0 })
 
-      const res = await postMeasurement(baseUrl, /** @type {any} */(unknownSubnet), true)
+      const res = await postMeasurement(baseUrl, /** @type {any} */(unknownSubnet), { retrievalSucceeded: true })
 
       await assertResponseStatus(res, 400)
     })
