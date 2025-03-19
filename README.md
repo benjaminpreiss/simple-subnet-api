@@ -8,8 +8,8 @@ multiple subnets.
 All commits pushed to the `main` branch are automatically deployed to Fly.io by
 a GitHub Actions workflow.
 
-To deploy the changes manually, run the following command from the **monorepo
-root directory**:
+To deploy the changes manually, run the following command from the root
+directory:
 
 ```bash
 fly deploy -c fly.toml
