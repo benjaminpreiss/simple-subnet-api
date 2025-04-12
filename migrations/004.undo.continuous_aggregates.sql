@@ -1,0 +1,4 @@
+-- pgmigrations:disable-transaction
+
+DROP MATERIALIZED VIEW IF EXISTS hourly_stats CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS minute_stats CASCADE;
