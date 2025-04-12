@@ -9,6 +9,12 @@ export type RequestWithSubnet<TBody = {}, UQuery = {}> = FastifyRequest<{
   Querystring: UQuery;
 }>;
 
+export type RequestWithSubnetV2<TBody = {}, UQuery = {}> = FastifyRequest<{
+  Params: { subnet: string; length: string; };
+  Body: TBody;
+  Querystring: UQuery;
+}>;
+
 export interface Logger {
   info: typeof console.info;
   error: typeof console.error;

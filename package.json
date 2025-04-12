@@ -6,11 +6,11 @@
   "scripts": {
     "migrate": "node bin/migrate.js",
     "start": "node bin/simple-subnet-api.js",
-    "dev": "./scripts/dev.sh",
+    "dev": "./scripts/dev.sh 'node bin/simple-subnet-api.js'",
     "lint": "prettier --check . && standard",
     "lint:fix": "prettier --write . && standard --fix .",
     "test:types": "tsc -p .",
-    "test:unit": "node --test --test-reporter=spec",
+    "test:unit": "./scripts/dev.sh 'node --test --test-reporter=spec'",
     "test": "npm run lint && npm run test:types && npm run test:unit"
   },
   "repository": {
