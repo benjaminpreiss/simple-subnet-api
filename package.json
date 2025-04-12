@@ -6,6 +6,7 @@
   "scripts": {
     "migrate": "node bin/migrate.js",
     "start": "node bin/simple-subnet-api.js",
+    "dev": "./scripts/dev.sh",
     "lint": "prettier --check . && standard",
     "lint:fix": "prettier --write . && standard --fix .",
     "test:types": "tsc -p .",
