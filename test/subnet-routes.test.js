@@ -317,6 +317,76 @@ describe('Subnet v2 routes', () => {
       await assertResponseStatus(res, 404)
     })
   })
+
+  describe('GET /v2/:subnet/discrete_aggregates/:length', () => {
+    it('retrieves minutely discrete aggregates for the last day', async () => {
+      const subnet = 'walrus'
+      const subnetCheckId = await withMockedSubnetCheck(pgPool, { subnet, checkSubject: 'subject2' })
+
+      // Insert a mock discrete data entry within the time span we're going to query
+      await pgPool.query(
+        `INSERT INTO minute_stats_discrete (bucket_time, subnet_check_id, check_key, total_checks, successful_checks, results)
+         VALUES (now(), $1, $2, $3, $4, $5)`,
+        [subnetCheckId, 'key2', 20, 10, ['result1', 'result2']]
+      )
+
+      // Calculate date range for the last 24 hours
+      const currentEpoch = Date.now()
+      const oneDayAgoEpoch = currentEpoch - (24 * 60 * 60 * 1000) // 24 hours in milliseconds
+
+      const from = new Date(oneDayAgoEpoch).toISOString()
+      const to = new Date(currentEpoch).toISOString()
+
+      const res = await fetch(new URL(`/v2/${subnet}/discrete_aggregates/minutely?from=${from}&to=${to}&checkSubject=subject2`, baseUrl))
+      await assertResponseStatus(res, 200)
+
+      /** @type {any} */
+      const data = await res.json()
+      assert.strictEqual(data.length, 1)
+      assert.strictEqual(data[0].total_checks, 20)
+      assert.deepStrictEqual(data[0].results, ['result1', 'result2'])
+    })
+
+    it('retrieves hourly discrete aggregates with results as an array', async () => {
+      const subnet = 'arweave'
+      const subnetCheckId = await withMockedSubnetCheck(pgPool, { subnet, checkSubject: 'subject3' })
+
+      // Insert a mock discrete data entry for hourly aggregation
+      await pgPool.query(
+        `INSERT INTO hourly_stats_discrete (bucket_time, subnet_check_id, check_key, total_checks, successful_checks, results)
+         VALUES (now(), $1, $2, $3, $4, $5)`,
+        [subnetCheckId, 'key3', 50, 25, ['result3', 'result4']]
+      )
+
+      // Calculate date range for the last 24 hours
+      const currentEpoch = Date.now()
+      const oneDayAgoEpoch = currentEpoch - (24 * 60 * 60 * 1000) // 24 hours in milliseconds
+
+      const from = new Date(oneDayAgoEpoch).toISOString()
+      const to = new Date(currentEpoch).toISOString()
+
+      const res = await fetch(new URL(`/v2/${subnet}/discrete_aggregates/hourly?from=${from}&to=${to}&checkSubject=subject3`, baseUrl))
+      await assertResponseStatus(res, 200)
+
+      /** @type {any} */
+      const data = await res.json()
+      assert.strictEqual(data.length, 1)
+      assert.strictEqual(data[0].total_checks, 50)
+      assert.deepStrictEqual(data[0].results, ['result3', 'result4'])
+    })
+
+    it('returns 404 if subnet_check does not exist for the queried discrete subject', async () => {
+      const subnet = 'arweave'
+      const currentEpoch = Date.now()
+      const oneDayAgoEpoch = currentEpoch - (24 * 60 * 60 * 1000)
+
+      const from = new Date(oneDayAgoEpoch).toISOString()
+      const to = new Date(currentEpoch).toISOString()
+
+      const res = await fetch(new URL(`/v2/${subnet}/discrete_aggregates/minutely?from=${from}&to=${to}&checkSubject=nonexistent-discrete`, baseUrl))
+      await assertResponseStatus(res, 404)
+    })
+  })
 })
 
 // Helper for setting up a subnet check entry

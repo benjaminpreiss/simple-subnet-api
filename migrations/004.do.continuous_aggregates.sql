@@ -46,3 +46,51 @@ SELECT add_continuous_aggregate_policy('hourly_stats',
     start_offset => INTERVAL '90 days',
     end_offset => INTERVAL '1 hour',
     schedule_interval => INTERVAL '1 hour');
+
+-- Create a continuous aggregate for minute-level discrete data
+CREATE MATERIALIZED VIEW minute_stats_discrete
+WITH (timescaledb.continuous) AS
+SELECT
+    time_bucket('1 minute', time) AS bucket_time,
+    subnet_check_id,
+    check_key,
+    COUNT(*) AS total_checks,
+    SUM(CASE WHEN success THEN 1 ELSE 0 END) AS successful_checks,
+    ARRAY_AGG(result) AS results -- Aggregate results into an array of strings
+FROM
+    measurements_discrete
+GROUP BY
+    bucket_time,
+    subnet_check_id,
+    check_key
+WITH NO DATA;
+
+-- Set refresh policy to keep minute stats for discrete data updated
+SELECT add_continuous_aggregate_policy('minute_stats_discrete',
+    start_offset => INTERVAL '30 days',
+    end_offset => INTERVAL '1 minute',
+    schedule_interval => INTERVAL '1 minute');
+
+-- Create additional hourly stats view for discrete data
+CREATE MATERIALIZED VIEW hourly_stats_discrete
+WITH (timescaledb.continuous) AS
+SELECT
+    time_bucket('1 hour', bucket_time) AS bucket_time,
+    subnet_check_id,
+    check_key,
+    SUM(total_checks) AS total_checks,
+    SUM(successful_checks) AS successful_checks,
+    -- Aggregate results from minute_stats_discrete
+    ARRAY_AGG(results) AS results
+FROM
+    minute_stats_discrete
+GROUP BY
+    time_bucket('1 hour', bucket_time),
+    subnet_check_id,
+    check_key
+WITH NO DATA;
+
+SELECT add_continuous_aggregate_policy('hourly_stats_discrete',
+    start_offset => INTERVAL '90 days',
+    end_offset => INTERVAL '1 hour',
+    schedule_interval => INTERVAL '1 hour');

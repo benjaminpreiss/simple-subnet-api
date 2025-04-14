@@ -17,8 +17,10 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+docker-compose down --volumes
+
 # Define commands in variables
-DOCKER_CMD="docker compose up --detach --wait"
+DOCKER_CMD="docker compose up -d --detach --wait"
 
 # Execute DOCKER_CMD first
 echo "Executing Docker Compose Up with --wait..."
